@@ -10,6 +10,7 @@ type IntroSplashProps = {
 const SIEPT = ["S", "i", "e", "p", "t"] as const;
 const IT = ["I", "T"] as const;
 const TAGLINE = "Identidade digital. Desenvolvimento com propósito.";
+const COUNT_START = 3;
 const COUNT_MS = 820;
 const LETTER_MS = 145;
 const IT_LETTER_MS = 240;
@@ -24,7 +25,7 @@ type Phase =
 
 export default function IntroSplash({ onComplete }: IntroSplashProps) {
   const [phase, setPhase] = useState<Phase>("countdown");
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(COUNT_START);
   const [countPulse, setCountPulse] = useState(true);
   const [sieptCount, setSieptCount] = useState(0);
   const [itCount, setItCount] = useState(0);
@@ -88,7 +89,7 @@ export default function IntroSplash({ onComplete }: IntroSplashProps) {
     })();
 
     // Never wait forever for assets
-    timers.push(window.setTimeout(markAssetsReady, 5500));
+    timers.push(window.setTimeout(markAssetsReady, COUNT_START * COUNT_MS + 1200));
 
     function finishAndExit() {
       timers.push(
@@ -158,9 +159,9 @@ export default function IntroSplash({ onComplete }: IntroSplashProps) {
       );
     }
 
-    // Countdown 5 → 4 → 3 → 2 → 1 → 0
-    let n = 5;
-    setCount(5);
+    // Countdown 3 → 2 → 1 → 0
+    let n = COUNT_START;
+    setCount(COUNT_START);
     setCountPulse(true);
 
     const stepCount = () => {
