@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "subscription": {
+    "plan": "basic",
+    "status": "draft"
+  },
+  "identity": {
+    "name": "Atelier Norte",
+    "slogan": "Design e espaços com alma atlântica",
+    "sector": "servicos",
+    "about": "Somos uma equipa de Lisboa especializada em projectos residenciais e comerciais, com foco em luz natural e materiais duradouros."
+  },
+  "contact": {
+    "phone": "+351 210 000 000",
+    "email": "ola@ateliernorte.pt",
+    "address": "Rua do Alecrim 12, Lisboa",
+    "hours": "Seg–Sex 09:00–18:00",
+    "social": {
+      "instagram": "https://instagram.com/ateliernorte",
+      "facebook": "",
+      "linkedin": ""
+    },
+    "primaryCta": "contact"
+  },
+  "services": [
+    {
+      "title": "Consultoria",
+      "description": "Diagnóstico e plano de acção."
+    },
+    {
+      "title": "Projecto",
+      "description": "Desenho completo do espaço."
+    },
+    {
+      "title": "Acompanhamento",
+      "description": "Obra com presença em obra."
+    }
+  ],
+  "theme": {
+    "paletteId": "steel-ice",
+    "fontId": "clean-sans",
+    "introAnimation": false,
+    "introStyle": "fade-name"
+  },
+  "media": {
+    "photoIds": [
+      "p01",
+      "p03",
+      "p17"
+    ],
+    "logoUrl": null,
+    "soundId": "coastal-breeze",
+    "soundAutoplay": false
+  },
+  "pages": {
+    "home": true
+  },
+  "legal": {
+    "privacyUrl": null,
+    "termsUrl": null
+  },
+  "slug": "atelier-norte",
+  "layoutId": "onepage-hero"
+}

@@ -27,7 +27,7 @@ export default function HomePage() {
             <nav className={styles.nav} aria-label="Principal">
               <a href="#como-funciona">Como funciona</a>
               <a href="#planos">Planos</a>
-              <a href="#comecar" className={styles.navCta}>
+              <a href="/criar" className={styles.navCta}>
                 Começar
               </a>
             </nav>
@@ -50,7 +50,7 @@ export default function HomePage() {
                 Sem ruído. Sem complexidade desnecessária.
               </p>
               <div className={styles.heroActions}>
-                <a href="#" className={styles.btn} id="comecar">
+                <a href="/criar" className={styles.btn} id="comecar">
                   Criar o meu site
                 </a>
                 <a href="#como-funciona" className={`${styles.btn} ${styles.btnGhost}`}>
@@ -150,7 +150,7 @@ export default function HomePage() {
                   <li>Manutenção e suporte incluídos</li>
                 </ul>
                 <div className={styles.planCta}>
-                  <a href="#" className={styles.btn}>
+                  <a href="/criar" className={styles.btn}>
                     Começar
                   </a>
                 </div>
@@ -200,7 +200,7 @@ export default function HomePage() {
               Siept IT — sem fricção, com continuidade.
             </p>
             <div className={styles.finalActions}>
-              <a href="#" className={styles.btn}>
+              <a href="/criar" className={styles.btn}>
                 Criar o meu site
               </a>
             </div>
