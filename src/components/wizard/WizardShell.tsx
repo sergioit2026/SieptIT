@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useWizard, WIZARD_STEPS } from "./WizardContext";
 import StepNegocio from "./StepNegocio";
@@ -12,11 +13,20 @@ import StepRever from "./StepRever";
 import styles from "./wizard.module.css";
 
 export default function WizardShell() {
+  const router = useRouter();
   const { stepIndex, stepId, finished, goNext, goBack, goTo, finish } = useWizard();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [stepIndex, finished]);
+
+  function handleBack() {
+    if (stepIndex === 0) {
+      router.push("/");
+      return;
+    }
+    goBack();
+  }
 
   const progress = ((stepIndex + 1) / WIZARD_STEPS.length) * 100;
   const isLast = stepId === "rever";
@@ -92,9 +102,7 @@ export default function WizardShell() {
             <button
               type="button"
               className={`${styles.btn} ${styles.btnGhost}`}
-              onClick={goBack}
-              disabled={stepIndex === 0}
-              style={stepIndex === 0 ? { opacity: 0.4, cursor: "default" } : undefined}
+              onClick={handleBack}
             >
               Voltar
             </button>
@@ -109,7 +117,7 @@ export default function WizardShell() {
             <button
               type="button"
               className={`${styles.btn} ${styles.btnGhost}`}
-              onClick={goBack}
+              onClick={handleBack}
             >
               Voltar
             </button>
