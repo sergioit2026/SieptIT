@@ -82,8 +82,8 @@ export type SiteConfig = {
   media: Media;
   pages: { home: true };
   legal: {
-    privacyUrl: null;
-    termsUrl: null;
+    privacyUrl: string | null;
+    termsUrl: string | null;
   };
 };
 
@@ -223,8 +223,8 @@ export function buildSiteConfig(state: WizardState): SiteConfig {
     },
     pages: { home: true },
     legal: {
-      privacyUrl: null,
-      termsUrl: null,
+      privacyUrl: "/privacidade",
+      termsUrl: "/termos",
     },
   };
 }

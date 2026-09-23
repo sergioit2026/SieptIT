@@ -222,8 +222,8 @@ export default function HomePage() {
           <div className={styles.footerInner}>
             <p className={styles.footerCopy}>© {new Date().getFullYear()} Siept IT</p>
             <div className={styles.footerLinks}>
-              <a href="#">Privacidade</a>
-              <a href="#">Termos</a>
+              <a href="/privacidade">Privacidade</a>
+              <a href="/termos">Termos</a>
               <a href="#">Contacto</a>
             </div>
           </div>

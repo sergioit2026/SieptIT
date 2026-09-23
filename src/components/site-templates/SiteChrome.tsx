@@ -71,9 +71,16 @@ export function SiteFooter({ config }: { config: SiteConfig }) {
           </p>
         </div>
         <div className={styles.footerLegal}>
-          {/* legal URLs intentionally null — placeholders only, no invented policies */}
-          <span aria-disabled="true">Privacidade</span>
-          <span aria-disabled="true">Termos</span>
+          {config.legal.privacyUrl ? (
+            <a href={config.legal.privacyUrl}>Privacidade</a>
+          ) : (
+            <span aria-disabled="true">Privacidade</span>
+          )}
+          {config.legal.termsUrl ? (
+            <a href={config.legal.termsUrl}>Termos</a>
+          ) : (
+            <span aria-disabled="true">Termos</span>
+          )}
           <a href="#contacto">Contactos</a>
         </div>
       </div>
