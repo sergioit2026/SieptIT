@@ -133,12 +133,22 @@ export default function HomePage() {
             <p className={styles.lead}>
               O plano Básico é o foco actual: identidade na web, limpa e
               profissional. O Futuro chega a seguir, com capacidades avançadas.
+              Os preços estão definidos; o pagamento online chega mais perto do
+              lançamento.
             </p>
 
             <div className={styles.plans}>
               <article className={`${styles.plan} ${styles.planFocus}`}>
                 <span className={styles.planBadge}>Em destaque</span>
                 <h3>Básico</h3>
+                <p className={styles.planPrice}>
+                  <span className={styles.planAmount}>19,90&nbsp;€</span>
+                  <span className={styles.planPeriod}>/mês</span>
+                </p>
+                <p className={styles.planAlt}>
+                  ou <strong>179&nbsp;€/ano</strong> (equivale a 14,90&nbsp;€/mês)
+                </p>
+                <p className={styles.planTax}>Valores sem IVA · sem checkout por agora</p>
                 <p className={styles.planDesc}>
                   A sua identidade na web — página profissional, actualizações
                   contínuas e presença estável sob assinatura.
@@ -151,7 +161,7 @@ export default function HomePage() {
                 </ul>
                 <div className={styles.planCta}>
                   <a href="/criar" className={styles.btn}>
-                    Começar
+                    Começar o wizard
                   </a>
                 </div>
               </article>
@@ -161,6 +171,7 @@ export default function HomePage() {
                   Em breve
                 </span>
                 <h3>Futuro</h3>
+                <p className={styles.planPriceSoon}>Preço a anunciar</p>
                 <p className={styles.planDesc}>
                   Expansão natural do Básico: base de dados, newsletters e
                   ferramentas para crescer com a sua audiência.
