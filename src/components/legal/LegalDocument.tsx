@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LegalDocId } from "@/lib/legal-docs";
-import { LEGAL_META } from "@/lib/legal-docs";
+import { LEGAL_META, LEGAL_VERSION } from "@/lib/legal-docs";
 import styles from "./legal.module.css";
 
 type Props = {
@@ -48,7 +48,10 @@ export default function LegalDocument({ id, html }: Props) {
       </div>
 
       <main className={styles.main}>
-        <p className={styles.eyebrow}>Documentação legal · Siept IT</p>
+        <p className={styles.eyebrow}>
+          Documentação legal · Siept IT · {LEGAL_VERSION.version} (rascunho) ·{" "}
+          {LEGAL_VERSION.date}
+        </p>
         <article
           className={styles.article}
           aria-label={meta.title}
@@ -59,7 +62,8 @@ export default function LegalDocument({ id, html }: Props) {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <p className={styles.footerCopy}>
-            © {new Date().getFullYear()} Siept IT · rascunho
+            © {new Date().getFullYear()} Siept IT · rascunho {LEGAL_VERSION.version} ·{" "}
+            {LEGAL_VERSION.date}
           </p>
           <div className={styles.footerLinks}>
             <Link href={`/${other}`}>{otherMeta.navLabel}</Link>

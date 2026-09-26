@@ -4,6 +4,9 @@ import { markdownToHtml } from "./simple-markdown";
 
 export type LegalDocId = "termos" | "privacidade";
 
+/** Version/date of the drafts in content/legal (keep in sync with the .md headers). */
+export const LEGAL_VERSION = { version: "v1.1", date: "26/09/2026" } as const;
+
 const FILES: Record<LegalDocId, string> = {
   termos: "termos-de-utilizacao.md",
   privacidade: "politica-de-privacidade.md",

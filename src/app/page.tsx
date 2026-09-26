@@ -148,7 +148,7 @@ export default function HomePage() {
                 <p className={styles.planAlt}>
                   ou <strong>179&nbsp;€/ano</strong> (equivale a 14,90&nbsp;€/mês)
                 </p>
-                <p className={styles.planTax}>Valores sem IVA · sem checkout por agora</p>
+                <p className={styles.planTax}>Preços finais · sem checkout por agora</p>
                 <p className={styles.planDesc}>
                   A sua identidade na web — página profissional, actualizações
                   contínuas e presença estável sob assinatura.

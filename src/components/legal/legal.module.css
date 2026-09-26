@@ -175,6 +175,21 @@
   margin-bottom: 0.35rem;
 }
 
+.article :global(li > ul),
+.article :global(li > ol) {
+  margin: 0.35rem 0 0.25rem;
+}
+
+.article :global(em) {
+  font-style: italic;
+}
+
+.article :global(a) {
+  color: var(--accent-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .article :global(hr) {
   border: 0;
   border-top: 1px solid var(--border);
@@ -193,6 +208,12 @@
   margin: 0;
   color: var(--text);
   font-size: 0.95rem;
+}
+
+.article :global(blockquote p + p),
+.article :global(blockquote p + ul),
+.article :global(blockquote p + ol) {
+  margin-top: 0.55rem;
 }
 
 .article :global(code) {
