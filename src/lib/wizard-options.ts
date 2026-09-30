@@ -52,6 +52,13 @@ export type PaletteOption = {
   label: string;
   description: string;
   swatches: [string, string, string, string];
+  /** Fundo escuro com texto claro (afecta tons secundários e bordas). */
+  dark?: boolean;
+  /**
+   * Cor-base (triplo RGB, ex. "59, 51, 31") para texto secundário e bordas.
+   * Se omitida, usam-se os tons neutros azulados por defeito.
+   */
+  ink?: string;
   preview: {
     bg: string;
     surface: string;
@@ -65,6 +72,7 @@ export const PALETTES: PaletteOption[] = [
     id: "midnight-blue",
     label: "Azul meia-noite",
     description: "Fundo escuro elegante com acentos azul-prata.",
+    dark: true,
     swatches: ["#0f1c2e", "#1a3a5c", "#5b9fd4", "#e8f0f8"],
     preview: {
       bg: "#0f1c2e",
@@ -89,6 +97,7 @@ export const PALETTES: PaletteOption[] = [
     id: "ink-gold",
     label: "Tinta e ouro",
     description: "Contraste sóbrio com toque dourado discreto.",
+    dark: true,
     swatches: ["#1a1a18", "#2a2924", "#c4a35a", "#f5f2ea"],
     preview: {
       bg: "#1a1a18",
@@ -107,6 +116,58 @@ export const PALETTES: PaletteOption[] = [
       surface: "#f7fafc",
       text: "#1a2b3d",
       accent: "#2c5f8f",
+    },
+  },
+  {
+    id: "soft-yellow",
+    label: "Amarelo suave",
+    description: "Creme amanteigado com acentos ocre — acolhedor e luminoso.",
+    swatches: ["#fdf8e4", "#f6e7a8", "#86640a", "#3b331f"],
+    ink: "59, 51, 31",
+    preview: {
+      bg: "#fdf8e4",
+      surface: "#fffdf4",
+      text: "#3b331f",
+      accent: "#86640a",
+    },
+  },
+  {
+    id: "peach-orange",
+    label: "Laranja pêssego",
+    description: "Pêssego claro com laranja terroso — caloroso e próximo.",
+    swatches: ["#fff4ec", "#ffd6ba", "#a84d17", "#3f2b1f"],
+    ink: "63, 43, 31",
+    preview: {
+      bg: "#fff4ec",
+      surface: "#fffaf6",
+      text: "#3f2b1f",
+      accent: "#a84d17",
+    },
+  },
+  {
+    id: "soft-pink",
+    label: "Rosa suave",
+    description: "Rosa pálido com acentos framboesa — delicado e moderno.",
+    swatches: ["#fdf2f5", "#f7cbd8", "#a83a64", "#3d2431"],
+    ink: "61, 36, 49",
+    preview: {
+      bg: "#fdf2f5",
+      surface: "#fffafb",
+      text: "#3d2431",
+      accent: "#a83a64",
+    },
+  },
+  {
+    id: "coral-red",
+    label: "Vermelho coral",
+    description: "Coral suave com vermelho tijolo — enérgico sem ser agressivo.",
+    swatches: ["#fff2ef", "#ffc7bd", "#b0392f", "#402321"],
+    ink: "64, 35, 33",
+    preview: {
+      bg: "#fff2ef",
+      surface: "#fffaf9",
+      text: "#402321",
+      accent: "#b0392f",
     },
   },
 ];

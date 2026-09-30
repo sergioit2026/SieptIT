@@ -4,10 +4,8 @@ import { getPalette } from "./wizard-options";
 
 export type ThemeCssVars = Record<`--${string}`, string>;
 
-const DARK_PALETTES: PaletteId[] = ["midnight-blue", "ink-gold"];
-
 export function isDarkPalette(id: PaletteId): boolean {
-  return DARK_PALETTES.includes(id);
+  return getPalette(id).dark === true;
 }
 
 export function fontFamilyFor(id: FontId): string {
@@ -31,20 +29,36 @@ export function accentFontFamily(id: FontId): string {
 
 export function themeVarsFromConfig(config: SiteConfig): ThemeCssVars {
   const palette = getPalette(config.theme.paletteId);
-  const dark = isDarkPalette(config.theme.paletteId);
+  const dark = palette.dark === true;
   const { bg, surface, text, accent } = palette.preview;
+  // Tons secundários: base da paleta (ink) quando definida; senão neutros.
+  const ink = palette.ink;
 
   return {
     "--site-bg": bg,
     "--site-surface": surface,
     "--site-text": text,
     "--site-accent": accent,
-    "--site-muted": dark ? "rgba(232, 240, 248, 0.72)" : "rgba(26, 43, 61, 0.72)",
-    "--site-dim": dark ? "rgba(232, 240, 248, 0.5)" : "rgba(26, 43, 61, 0.5)",
-    "--site-border": dark ? "rgba(255, 255, 255, 0.12)" : "rgba(30, 64, 110, 0.12)",
-    "--site-border-strong": dark
-      ? "rgba(255, 255, 255, 0.22)"
-      : "rgba(30, 64, 110, 0.2)",
+    "--site-muted": ink
+      ? `rgba(${ink}, 0.72)`
+      : dark
+        ? "rgba(232, 240, 248, 0.72)"
+        : "rgba(26, 43, 61, 0.72)",
+    "--site-dim": ink
+      ? `rgba(${ink}, 0.5)`
+      : dark
+        ? "rgba(232, 240, 248, 0.5)"
+        : "rgba(26, 43, 61, 0.5)",
+    "--site-border": ink
+      ? `rgba(${ink}, 0.12)`
+      : dark
+        ? "rgba(255, 255, 255, 0.12)"
+        : "rgba(30, 64, 110, 0.12)",
+    "--site-border-strong": ink
+      ? `rgba(${ink}, 0.2)`
+      : dark
+        ? "rgba(255, 255, 255, 0.22)"
+        : "rgba(30, 64, 110, 0.2)",
     "--site-glow": dark ? `${accent}33` : `${accent}28`,
     "--site-font": fontFamilyFor(config.theme.fontId),
     "--site-font-accent": accentFontFamily(config.theme.fontId),

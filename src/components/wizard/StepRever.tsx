@@ -11,6 +11,7 @@ import {
   SOUNDS,
 } from "@/lib/wizard-options";
 import { buildSiteConfig } from "@/lib/site-config";
+import { isDarkPalette } from "@/lib/theme-tokens";
 import { previewPath, saveSiteConfig } from "@/lib/site-storage";
 import { useWizard } from "./WizardContext";
 import styles from "./wizard.module.css";
@@ -107,9 +108,7 @@ export default function StepRever() {
   }
 
   const preview = palette.preview;
-  const isDark =
-    state.theme.paletteId === "midnight-blue" ||
-    state.theme.paletteId === "ink-gold";
+  const isDark = isDarkPalette(state.theme.paletteId);
 
   return (
     <div className={styles.panel}>
@@ -218,7 +217,7 @@ export default function StepRever() {
                   : "rgba(30,64,110,0.15)",
                 background: isDark
                   ? "rgba(255,255,255,0.08)"
-                  : "rgba(61,122,184,0.1)",
+                  : `${preview.accent}1a`,
               }}
             >
               {layout?.label ?? "Layout"}

@@ -20,7 +20,11 @@ export type PaletteId =
   | "midnight-blue"
   | "steel-ice"
   | "ink-gold"
-  | "pure-light";
+  | "pure-light"
+  | "soft-yellow"
+  | "peach-orange"
+  | "soft-pink"
+  | "coral-red";
 
 export type FontId = "clean-sans" | "editorial" | "tech-mono-accent";
 
