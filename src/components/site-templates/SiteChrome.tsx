@@ -2,7 +2,11 @@
 
 import type { ReactNode } from "react";
 import type { SiteConfig } from "@/lib/site-config";
-import { primaryCtaHref, primaryCtaLabel } from "@/lib/render/photos";
+import {
+  primaryCtaHref,
+  primaryCtaLabel,
+  type ResolvedPhoto,
+} from "@/lib/render/photos";
 import ContactForm from "./ContactForm";
 import SoundControl from "./SoundControl";
 import styles from "./site.module.css";
@@ -156,10 +160,57 @@ export function ContactSection({ config }: { config: SiteConfig }) {
   );
 }
 
+/**
+ * One 4:3 photo with intrinsic width/height (no layout shift).
+ * `priority` = principal photo (eager + fetchpriority high); otherwise lazy.
+ * Own photos not available in this browser render a neutral placeholder.
+ */
+export function SitePhoto({
+  photo,
+  priority = false,
+  eager = false,
+}: {
+  photo: ResolvedPhoto;
+  priority?: boolean;
+  eager?: boolean;
+}) {
+  if (!photo.url) {
+    return (
+      <span
+        className={styles.photoPlaceholder}
+        role="img"
+        aria-label={photo.alt || "Foto"}
+      >
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm1 2v8.6l3.3-3.3a1 1 0 0 1 1.4 0l2.3 2.3 3.3-3.3a1 1 0 0 1 1.4 0L19 13.6V7H5Zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
+          />
+        </svg>
+      </span>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={photo.url}
+      alt={photo.alt}
+      width={photo.width}
+      height={photo.height}
+      loading={priority || eager ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
+      decoding={priority ? "auto" : "async"}
+    />
+  );
+}
+
 export function Gallery({
   photos,
+  firstEager = false,
 }: {
-  photos: { id: string; label: string; url: string }[];
+  photos: ResolvedPhoto[];
+  /** Layouts without a hero photo: the principal is the first gallery item. */
+  firstEager?: boolean;
 }) {
   if (photos.length === 0) return null;
   return (
@@ -167,10 +218,9 @@ export function Gallery({
       <p className={styles.eyebrow}>Galeria</p>
       <h2 className={styles.sectionTitle}>O nosso espaço</h2>
       <div className={styles.gallery}>
-        {photos.map((p) => (
+        {photos.map((p, i) => (
           <figure key={p.id}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.url} alt={p.label} loading="lazy" />
+            <SitePhoto photo={p} eager={firstEager && i === 0} />
           </figure>
         ))}
       </div>

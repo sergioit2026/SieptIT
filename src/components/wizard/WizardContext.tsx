@@ -4,13 +4,17 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
-import { saveSiteConfig } from "@/lib/site-storage";
+import { loadSiteConfig, saveSiteConfig } from "@/lib/site-storage";
+import { checkResolution } from "@/lib/image-processing";
+import { deletePhoto, prunePhotos } from "@/lib/photo-store";
 import {
   ABOUT_MAX,
+  PHOTO_ALT_MAX,
   PHOTOS_MAX,
   SERVICES_MAX,
   SERVICES_MIN,
@@ -23,7 +27,9 @@ import {
   type ServiceItem,
   type SiteConfig,
   type Theme,
+  type UserPhotoRef,
   type WizardState,
+  isUserPhotoId,
 } from "@/lib/site-config";
 
 export const WIZARD_STEPS = [
@@ -55,6 +61,10 @@ type WizardContextValue = {
   setTheme: (patch: Partial<Theme>) => void;
   setMedia: (patch: Partial<Media>) => void;
   togglePhoto: (photoId: string) => void;
+  addUserPhoto: (ref: UserPhotoRef) => void;
+  updateUserPhotoAlt: (id: string, alt: string) => void;
+  movePhoto: (index: number, delta: -1 | 1) => void;
+  removePhoto: (id: string) => void;
   goNext: () => boolean;
   goBack: () => void;
   goTo: (index: number) => void;
@@ -127,6 +137,18 @@ function validateStep(
   if (stepIndex === 4) {
     if (state.media.photoIds.length > PHOTOS_MAX) {
       errors.photos = `Seleccione no máximo ${PHOTOS_MAX} fotos.`;
+    }
+    for (const ref of state.media.userPhotos) {
+      if (!state.media.photoIds.includes(ref.id)) continue;
+      const alt = ref.alt.trim();
+      if (!alt) {
+        errors[`alt-${ref.id}`] = "Descreva a foto (texto alternativo obrigatório).";
+      } else if (alt.length > PHOTO_ALT_MAX) {
+        errors[`alt-${ref.id}`] = `Máximo de ${PHOTO_ALT_MAX} caracteres.`;
+      }
+    }
+    if (Object.keys(errors).some((k) => k.startsWith("alt-")) && !errors.photos) {
+      errors.photos = "Todas as suas fotos precisam de texto alternativo.";
     }
     if (state.media.logoUrl) {
       try {
@@ -248,6 +270,95 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const addUserPhoto = useCallback((ref: UserPhotoRef) => {
+    setState((prev) => {
+      if (prev.media.photoIds.length >= PHOTOS_MAX) return prev;
+      return {
+        ...prev,
+        media: {
+          ...prev.media,
+          photoIds: [...prev.media.photoIds, ref.id],
+          userPhotos: [...prev.media.userPhotos, ref],
+        },
+      };
+    });
+  }, []);
+
+  const updateUserPhotoAlt = useCallback((id: string, alt: string) => {
+    setState((prev) => ({
+      ...prev,
+      media: {
+        ...prev.media,
+        userPhotos: prev.media.userPhotos.map((p) =>
+          p.id === id ? { ...p, alt: alt.slice(0, PHOTO_ALT_MAX) } : p
+        ),
+      },
+    }));
+    // Clear the stale validation message once the field is filled in.
+    if (alt.trim()) {
+      setErrors((prev) => {
+        if (!(`alt-${id}` in prev)) return prev;
+        const next = { ...prev };
+        delete next[`alt-${id}`];
+        if (!Object.keys(next).some((k) => k.startsWith("alt-"))) {
+          delete next.photos;
+        }
+        return next;
+      });
+    }
+  }, []);
+
+  const movePhoto = useCallback((index: number, delta: -1 | 1) => {
+    setState((prev) => {
+      const ids = [...prev.media.photoIds];
+      const to = index + delta;
+      if (index < 0 || to < 0 || index >= ids.length || to >= ids.length) {
+        return prev;
+      }
+      // A user photo that only meets the gallery minimum cannot become the
+      // principal photo. Keep this guard here as well as in the UI so the
+      // ordering rule cannot be bypassed by another caller.
+      if (to === 0 && isUserPhotoId(ids[index])) {
+        const ref = prev.media.userPhotos.find((photo) => photo.id === ids[index]);
+        if (ref && checkResolution(ref.width, ref.height, "principal").error) {
+          return prev;
+        }
+      }
+      [ids[index], ids[to]] = [ids[to], ids[index]];
+      return { ...prev, media: { ...prev.media, photoIds: ids } };
+    });
+  }, []);
+
+  const removePhoto = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      media: {
+        ...prev.media,
+        photoIds: prev.media.photoIds.filter((x) => x !== id),
+        userPhotos: prev.media.userPhotos.filter((p) => p.id !== id),
+      },
+    }));
+    setErrors((prev) => {
+      if (!(`alt-${id}` in prev)) return prev;
+      const next = { ...prev };
+      delete next[`alt-${id}`];
+      if (!Object.keys(next).some((k) => k.startsWith("alt-"))) delete next.photos;
+      return next;
+    });
+    if (isUserPhotoId(id)) {
+      // Keep the blob if the last saved config (preview) still uses it.
+      const saved = loadSiteConfig();
+      if (!saved?.media.photoIds.includes(id)) void deletePhoto(id);
+    }
+  }, []);
+
+  // Housekeeping: the wizard state is not persisted, so drop stored photos
+  // that are not referenced by the last saved site config.
+  useEffect(() => {
+    const saved = loadSiteConfig();
+    void prunePhotos((saved?.media.photoIds ?? []).filter(isUserPhotoId));
+  }, []);
+
   const goNext = useCallback(() => {
     const nextErrors = validateStep(stepIndex, state);
     setErrors(nextErrors);
@@ -304,6 +415,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       setTheme,
       setMedia,
       togglePhoto,
+      addUserPhoto,
+      updateUserPhotoAlt,
+      movePhoto,
+      removePhoto,
       goNext,
       goBack,
       goTo,
@@ -328,6 +443,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       setTheme,
       setMedia,
       togglePhoto,
+      addUserPhoto,
+      updateUserPhotoAlt,
+      movePhoto,
+      removePhoto,
       goNext,
       goBack,
       goTo,

@@ -1,56 +1,25 @@
 "use client";
 
 import { PHOTOS_MAX } from "@/lib/site-config";
-import { PHOTOS, SOUNDS } from "@/lib/wizard-options";
+import { SOUNDS } from "@/lib/wizard-options";
+import PhotoPicker from "./PhotoPicker";
 import { useWizard } from "./WizardContext";
 import styles from "./wizard.module.css";
 
 export default function StepMedia() {
-  const { state, errors, setMedia, togglePhoto } = useWizard();
+  const { state, errors, setMedia } = useWizard();
   const { media } = state;
 
   return (
     <div className={styles.panel}>
       <h1 className={styles.panelTitle}>Media</h1>
       <p className={styles.panelLead}>
-        Escolha fotos de referência (até {PHOTOS_MAX}), um logótipo opcional e
-        um ambiente sonoro — por defeito, silencioso.
+        Adicione até {PHOTOS_MAX} fotos (suas ou da biblioteca de exemplo), um
+        logótipo opcional e um ambiente sonoro — por defeito, silencioso.
       </p>
 
       <div className={styles.form}>
-        <div className={styles.field}>
-          <div className={styles.serviceHead}>
-            <span className={styles.label}>Fotos</span>
-            <span className={styles.hint}>
-              {media.photoIds.length}/{PHOTOS_MAX} seleccionadas
-            </span>
-          </div>
-          {errors.photos && <p className={styles.error}>{errors.photos}</p>}
-          <div className={styles.photoGrid}>
-            {PHOTOS.map((photo) => {
-              const selected = media.photoIds.includes(photo.id);
-              return (
-                <button
-                  key={photo.id}
-                  type="button"
-                  className={`${styles.photoBtn} ${
-                    selected ? styles.photoBtnSelected : ""
-                  }`}
-                  onClick={() => togglePhoto(photo.id)}
-                  aria-pressed={selected}
-                  aria-label={photo.label}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photo.url} alt="" loading="lazy" />
-                  <span className={styles.photoCheck} aria-hidden="true">
-                    ✓
-                  </span>
-                  <span className={styles.photoCaption}>{photo.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <PhotoPicker />
 
         <div className={styles.field}>
           <label className={styles.label} htmlFor="logo-url">

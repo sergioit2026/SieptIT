@@ -64,8 +64,28 @@ export type Theme = {
   introStyle: IntroStyle;
 };
 
+/**
+ * Own photo uploaded by the client. The image bytes live in IndexedDB
+ * (see `src/lib/photo-store.ts`), keyed by `id`; the config keeps only
+ * this reference. Always 4:3, already cropped/resized/re-encoded.
+ */
+export type UserPhotoRef = {
+  id: string;
+  alt: string;
+  width: number;
+  height: number;
+  mime: "image/webp" | "image/jpeg";
+  bytes: number;
+};
+
 export type Media = {
+  /**
+   * Ordered list of all photos (library ids such as `p01` and own-photo ids
+   * starting with `up_`). Index 0 = principal; the rest = galeria.
+   */
   photoIds: string[];
+  /** Metadata for own photos referenced in `photoIds`. */
+  userPhotos: UserPhotoRef[];
   logoUrl: string | null;
   soundId: string | null;
   soundAutoplay: boolean;
@@ -103,7 +123,14 @@ export type WizardState = {
 export const ABOUT_MAX = 400;
 export const SERVICES_MIN = 1;
 export const SERVICES_MAX = 6;
-export const PHOTOS_MAX = 6;
+/** F-1/F-2: total photos (library + own), 1 principal + 2 galeria. */
+export const PHOTOS_MAX = 3;
+export const PHOTO_ALT_MAX = 125;
+export const USER_PHOTO_PREFIX = "up_";
+
+export function isUserPhotoId(id: string): boolean {
+  return id.startsWith(USER_PHOTO_PREFIX);
+}
 
 export function createInitialWizardState(): WizardState {
   return {
@@ -135,6 +162,7 @@ export function createInitialWizardState(): WizardState {
     },
     media: {
       photoIds: [],
+      userPhotos: [],
       logoUrl: null,
       soundId: null,
       soundAutoplay: false,
@@ -221,6 +249,9 @@ export function buildSiteConfig(state: WizardState): SiteConfig {
     theme: { ...state.theme },
     media: {
       photoIds: [...state.media.photoIds],
+      userPhotos: state.media.userPhotos
+        .filter((p) => state.media.photoIds.includes(p.id))
+        .map((p) => ({ ...p, alt: p.alt.trim() })),
       logoUrl: state.media.logoUrl?.trim() || null,
       soundId: state.media.soundId,
       soundAutoplay: false,

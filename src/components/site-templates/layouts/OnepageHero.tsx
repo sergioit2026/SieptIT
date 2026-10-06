@@ -2,7 +2,7 @@ import type { SiteConfig } from "@/lib/site-config";
 import {
   primaryCtaHref,
   primaryCtaLabel,
-  resolvePhotos,
+  type ResolvedPhoto,
 } from "@/lib/render/photos";
 import {
   AboutSection,
@@ -10,6 +10,7 @@ import {
   Gallery,
   ServicesSection,
   SiteFooter,
+  SitePhoto,
   SiteNav,
   type NavItem,
 } from "../SiteChrome";
@@ -18,11 +19,12 @@ import styles from "../site.module.css";
 export default function OnepageHero({
   config,
   nav,
+  photos,
 }: {
   config: SiteConfig;
   nav: NavItem[];
+  photos: ResolvedPhoto[];
 }) {
-  const photos = resolvePhotos(config.media.photoIds);
   const hero = photos[0];
   const rest = photos.slice(1);
   const ctaLabel = primaryCtaLabel(config.contact.primaryCta);
@@ -50,8 +52,7 @@ export default function OnepageHero({
           </div>
           {hero ? (
             <div className={styles.heroMedia}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={hero.url} alt={hero.label} />
+              <SitePhoto photo={hero} priority />
             </div>
           ) : (
             <div
@@ -67,7 +68,7 @@ export default function OnepageHero({
       </section>
       <ServicesSection config={config} />
       <AboutSection config={config} />
-      <Gallery photos={rest.length ? rest : photos} />
+      <Gallery photos={rest} />
       <ContactSection config={config} />
       <SiteFooter config={config} />
     </div>

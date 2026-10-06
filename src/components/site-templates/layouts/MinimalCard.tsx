@@ -2,12 +2,13 @@ import type { SiteConfig } from "@/lib/site-config";
 import {
   primaryCtaHref,
   primaryCtaLabel,
-  resolvePhotos,
+  type ResolvedPhoto,
 } from "@/lib/render/photos";
 import {
   ContactSection,
   ServicesSection,
   SiteFooter,
+  SitePhoto,
   type NavItem,
 } from "../SiteChrome";
 import styles from "../site.module.css";
@@ -15,11 +16,12 @@ import styles from "../site.module.css";
 export default function MinimalCard({
   config,
   nav,
+  photos,
 }: {
   config: SiteConfig;
   nav: NavItem[];
+  photos: ResolvedPhoto[];
 }) {
-  const photos = resolvePhotos(config.media.photoIds);
   const hero = photos[0];
   const ctaLabel = primaryCtaLabel(config.contact.primaryCta);
   const ctaHref = primaryCtaHref(config.contact.primaryCta, config.contact);
@@ -44,8 +46,7 @@ export default function MinimalCard({
           <div className={styles.heroInner}>
             {hero ? (
               <div className={styles.heroMedia}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={hero.url} alt={hero.label} />
+                <SitePhoto photo={hero} priority />
               </div>
             ) : config.media.logoUrl ? (
               <div className={styles.heroMedia}>

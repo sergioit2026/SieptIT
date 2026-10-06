@@ -898,3 +898,249 @@
     transform: none;
   }
 }
+
+/* —— Own photos (upload + crop) —— */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.photoNote {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-line);
+  background: var(--bg-soft);
+  color: var(--accent-deep);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+
+.photoList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.photoItem {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  min-width: 0;
+}
+
+.photoThumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+
+.photoThumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoThumbEmpty {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.photoBadge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(15, 28, 46, 0.72);
+  color: #fff;
+}
+
+.photoBadgePrincipal {
+  background: var(--accent);
+}
+
+.photoMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.photoMeta .hint {
+  overflow-wrap: anywhere;
+}
+
+.photoAltFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.photoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  margin-left: -0.4rem;
+}
+
+.photoActions .linkBtn:disabled {
+  color: var(--text-dim);
+  opacity: 0.5;
+  cursor: default;
+  text-decoration: none;
+}
+
+.actionHelp {
+  flex-basis: 100%;
+  color: #8a5a00;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.uploadBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.9rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.btnDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.photoBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.libraryBox summary {
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.cropOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: rgba(10, 20, 35, 0.6);
+}
+
+.cropDialog {
+  width: min(680px, 100%);
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: 0 24px 60px rgba(10, 20, 35, 0.35);
+}
+
+.cropTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.cropFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.cropFrame:active {
+  cursor: grabbing;
+}
+
+.cropFrame:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cropCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cropControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cropRange {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.cropActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+@media (max-width: 560px) {
+  .photoItem {
+    grid-template-columns: 1fr;
+  }
+
+  .photoThumb {
+    max-width: 280px;
+  }
+
+  .cropOverlay {
+    padding: 0.5rem;
+  }
+
+  .cropDialog {
+    padding: 0.9rem;
+  }
+
+  .cropActions .btn {
+    flex: 1;
+  }
+}

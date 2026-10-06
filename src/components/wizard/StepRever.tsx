@@ -160,7 +160,15 @@ export default function StepRever() {
               <dt>Tipografia</dt>
               <dd>{font?.label ?? "—"}</dd>
               <dt>Fotos</dt>
-              <dd>{state.media.photoIds.length} seleccionadas</dd>
+              <dd>
+                {state.media.photoIds.length === 0
+                  ? "Nenhuma"
+                  : `${state.media.photoIds.length} (${
+                      state.media.userPhotos.filter((p) =>
+                        state.media.photoIds.includes(p.id)
+                      ).length
+                    } suas)`}
+              </dd>
               <dt>Som</dt>
               <dd>{soundLabel}</dd>
             </dl>

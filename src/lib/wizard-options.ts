@@ -210,6 +210,15 @@ export const SOUNDS: { id: string; label: string }[] = [
 ];
 
 /** Curated placeholder photos (picsum fixed IDs). */
+/**
+ * F-3: own-photo uploads depend on the monthly moderation quota
+ * (Sightengine free tier, ~2000 ops/month). When the backend reports the
+ * quota is near the limit, this becomes false: the upload button is hidden
+ * and the client picks from the pre-moderated library. Front-end only for
+ * now (no backend), so it is a static flag.
+ */
+export const USER_UPLOADS_ENABLED = true;
+
 export const PHOTOS: { id: string; label: string; url: string }[] = [
   { id: "p01", label: "Escritório claro", url: "https://picsum.photos/id/1015/800/600" },
   { id: "p02", label: "Mesa de trabalho", url: "https://picsum.photos/id/180/800/600" },

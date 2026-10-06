@@ -2,7 +2,7 @@ import type { SiteConfig } from "@/lib/site-config";
 import {
   primaryCtaHref,
   primaryCtaLabel,
-  resolvePhotos,
+  type ResolvedPhoto,
 } from "@/lib/render/photos";
 import {
   AboutSection,
@@ -18,11 +18,12 @@ import styles from "../site.module.css";
 export default function ClassicFour({
   config,
   nav,
+  photos,
 }: {
   config: SiteConfig;
   nav: NavItem[];
+  photos: ResolvedPhoto[];
 }) {
-  const photos = resolvePhotos(config.media.photoIds);
   const ctaLabel = primaryCtaLabel(config.contact.primaryCta);
   const ctaHref = primaryCtaHref(config.contact.primaryCta, config.contact);
 
@@ -48,7 +49,7 @@ export default function ClassicFour({
       </section>
       <ServicesSection config={config} emphasize />
       <AboutSection config={config} />
-      <Gallery photos={photos} />
+      <Gallery photos={photos} firstEager />
       <ContactSection config={config} />
       <SiteFooter config={config} />
     </div>
