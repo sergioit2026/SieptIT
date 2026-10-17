@@ -12,9 +12,15 @@ import StepMedia from "./StepMedia";
 import StepRever from "./StepRever";
 import styles from "./wizard.module.css";
 
-export default function WizardShell() {
+type Props = {
+  /** Só em /demonstracao: acção do botão «Terminar demonstração». */
+  onEndDemo?: () => void;
+  endingDemo?: boolean;
+};
+
+export default function WizardShell({ onEndDemo, endingDemo = false }: Props = {}) {
   const router = useRouter();
-  const { stepIndex, stepId, finished, goNext, goBack, goTo, finish } = useWizard();
+  const { demo, stepIndex, stepId, finished, goNext, goBack, goTo, finish } = useWizard();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -22,6 +28,7 @@ export default function WizardShell() {
 
   function handleBack() {
     if (stepIndex === 0) {
+      if (demo) return; // sem saídas do modo demonstração
       router.push("/");
       return;
     }
@@ -34,12 +41,35 @@ export default function WizardShell() {
 
   return (
     <div className={styles.page}>
+      {demo && (
+        <div className={styles.demoBanner} role="status">
+          <span>
+            <strong>Modo demonstração</strong> — nada é publicado nem guardado
+          </span>
+          {onEndDemo && (
+            <button
+              type="button"
+              className={styles.demoEnd}
+              onClick={onEndDemo}
+              disabled={endingDemo}
+            >
+              {endingDemo ? "A terminar…" : "Terminar demonstração"}
+            </button>
+          )}
+        </div>
+      )}
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link href="/" className={styles.logo}>
-            Siept IT
-          </Link>
-          <span className={styles.headerMeta}>Criar o meu site</span>
+          {demo ? (
+            <span className={styles.logo}>Siept IT</span>
+          ) : (
+            <Link href="/" className={styles.logo}>
+              Siept IT
+            </Link>
+          )}
+          <span className={styles.headerMeta}>
+            {demo ? "Demonstração do assistente" : "Criar o meu site"}
+          </span>
         </div>
       </header>
 
@@ -103,6 +133,9 @@ export default function WizardShell() {
               type="button"
               className={`${styles.btn} ${styles.btnGhost}`}
               onClick={handleBack}
+              style={demo && stepIndex === 0 ? { visibility: "hidden" } : undefined}
+              aria-hidden={demo && stepIndex === 0 ? true : undefined}
+              tabIndex={demo && stepIndex === 0 ? -1 : undefined}
             >
               Voltar
             </button>

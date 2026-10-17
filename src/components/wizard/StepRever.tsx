@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -10,15 +10,56 @@ import {
   getSectorLabel,
   SOUNDS,
 } from "@/lib/wizard-options";
-import { buildSiteConfig } from "@/lib/site-config";
+import { buildSiteConfig, type SiteConfig } from "@/lib/site-config";
+import { SiteRenderer } from "@/components/site-templates";
 import { isDarkPalette } from "@/lib/theme-tokens";
 import { previewPath, saveSiteConfig } from "@/lib/site-storage";
 import { useWizard } from "./WizardContext";
 import styles from "./wizard.module.css";
 
+/**
+ * Modo demonstração: pré-visualização dentro da própria página (sem navegar
+ * para /preview, que usaria o armazenamento normal). Bloqueia links externos.
+ */
+function DemoPreview({ config, onClose }: { config: SiteConfig; onClose: () => void }) {
+  const blockExits = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    const a = (e.target as HTMLElement).closest("a");
+    if (a && e.button !== 0) {
+      e.preventDefault();
+      return;
+    }
+    if (!a) return;
+    const href = a.getAttribute("href") ?? "";
+    if (href.startsWith("#")) return; // âncoras internas da página
+    e.preventDefault();
+  }, []);
+  return (
+    <div
+      className={styles.demoPreviewOverlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Pré-visualização da demonstração"
+      onClickCapture={blockExits}
+      onAuxClickCapture={blockExits}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <div className={styles.demoPreviewBar}>
+        <span>
+          <strong>Pré-visualização de demonstração</strong> — não publicada nem guardada
+        </span>
+        <button type="button" className={styles.demoEnd} onClick={onClose}>
+          Fechar pré-visualização
+        </button>
+      </div>
+      <SiteRenderer config={config} showPreviewBanner={false} />
+    </div>
+  );
+}
+
 export default function StepRever() {
-  const { state, finished, siteConfig } = useWizard();
+  const { demo, state, finished, siteConfig, resetFinished } = useWizard();
   const [copied, setCopied] = useState(false);
+  const [demoPreview, setDemoPreview] = useState<SiteConfig | null>(null);
   const router = useRouter();
 
   const palette = getPalette(state.theme.paletteId);
@@ -36,7 +77,7 @@ export default function StepRever() {
     : "";
 
   const handleCopy = useCallback(async () => {
-    if (!jsonText) return;
+    if (demo || !jsonText) return; // sem saídas em modo demonstração
     try {
       await navigator.clipboard.writeText(jsonText);
       setCopied(true);
@@ -44,10 +85,10 @@ export default function StepRever() {
     } catch {
       setCopied(false);
     }
-  }, [jsonText]);
+  }, [demo, jsonText]);
 
   const handleDownload = useCallback(() => {
-    if (!siteConfig) return;
+    if (demo || !siteConfig) return; // sem saídas em modo demonstração
     const blob = new Blob([jsonText], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -55,13 +96,52 @@ export default function StepRever() {
     a.download = `${siteConfig.slug || "site"}-config.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [jsonText, siteConfig]);
+  }, [demo, jsonText, siteConfig]);
 
   const openPreviewFromDraft = useCallback(() => {
     const config = buildSiteConfig(state);
+    if (demo) {
+      setDemoPreview(config);
+      return;
+    }
     saveSiteConfig(config);
     router.push(previewPath(config.slug));
-  }, [router, state]);
+  }, [demo, router, state]);
+
+  if (demoPreview) {
+    return <DemoPreview config={demoPreview} onClose={() => setDemoPreview(null)} />;
+  }
+
+  if (demo && finished && siteConfig) {
+    // Sem publicar, descarregar, copiar nem partilhar.
+    return (
+      <div className={styles.panel}>
+        <div className={styles.success}>
+          <div className={styles.successIcon} aria-hidden="true">
+            ✓
+          </div>
+          <h2>Demonstração concluída</h2>
+          <p>
+            Assim funcionaria a criação do seu site. Nesta demonstração nada é
+            publicado, guardado nem enviado. Para apagar tudo, use «Terminar
+            demonstração» no topo da página.
+          </p>
+          <div className={styles.successActions}>
+            <button type="button" className={styles.btn} onClick={() => setDemoPreview(siteConfig)}>
+              Ver pré-visualização
+            </button>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnSecondary}`}
+              onClick={resetFinished}
+            >
+              Voltar a editar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (finished && siteConfig) {
     const href = previewPath(siteConfig.slug);
@@ -114,8 +194,9 @@ export default function StepRever() {
     <div className={styles.panel}>
       <h1 className={styles.panelTitle}>Rever</h1>
       <p className={styles.panelLead}>
-        Confirme as escolhas. Pode pré-visualizar o site gerado a qualquer
-        momento, ou continuar para finalizar a pré-inscrição.
+        {demo
+          ? "Confirme as escolhas. Pode pré-visualizar o site a qualquer momento; nesta demonstração nada é publicado nem guardado."
+          : "Confirme as escolhas. Pode pré-visualizar o site gerado a qualquer momento, ou continuar para finalizar a pré-inscrição."}
       </p>
 
       <div className={styles.reviewGrid}>

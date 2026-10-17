@@ -44,6 +44,8 @@ export const WIZARD_STEPS = [
 export type WizardStepId = (typeof WIZARD_STEPS)[number]["id"];
 
 type WizardContextValue = {
+  /** Modo demonstração (/demonstracao): sem publicar, guardar nem exportar. */
+  demo: boolean;
   stepIndex: number;
   stepId: WizardStepId;
   state: WizardState;
@@ -163,7 +165,13 @@ function validateStep(
   return errors;
 }
 
-export function WizardProvider({ children }: { children: ReactNode }) {
+export function WizardProvider({
+  children,
+  demo = false,
+}: {
+  children: ReactNode;
+  demo?: boolean;
+}) {
   const [stepIndex, setStepIndex] = useState(0);
   const [state, setState] = useState<WizardState>(createInitialWizardState);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -398,6 +406,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<WizardContextValue>(
     () => ({
+      demo,
       stepIndex,
       stepId,
       state,
@@ -426,6 +435,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       resetFinished,
     }),
     [
+      demo,
       stepIndex,
       stepId,
       state,

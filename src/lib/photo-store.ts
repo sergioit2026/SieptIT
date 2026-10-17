@@ -4,6 +4,8 @@
  * `SiteConfig.media.userPhotos[].id` references the record key.
  */
 
+import { demoMemory, isDemoMode } from "./demo/mode";
+
 const DB_NAME = "siept-photos";
 const DB_VERSION = 1;
 const STORE = "photos";
@@ -70,10 +72,18 @@ export function newUserPhotoId(): string {
 }
 
 export async function putPhoto(photo: StoredPhoto): Promise<void> {
+  // Modo demonstração: só memória, nunca o IndexedDB normal.
+  if (isDemoMode()) {
+    demoMemory.photos.set(photo.id, photo);
+    return;
+  }
   await tx("readwrite", (s) => s.put(photo));
 }
 
 export async function getPhoto(id: string): Promise<StoredPhoto | undefined> {
+  if (isDemoMode()) {
+    return demoMemory.photos.get(id) as StoredPhoto | undefined;
+  }
   try {
     return await tx<StoredPhoto>("readonly", (s) => s.get(id));
   } catch {
@@ -82,6 +92,10 @@ export async function getPhoto(id: string): Promise<StoredPhoto | undefined> {
 }
 
 export async function deletePhoto(id: string): Promise<void> {
+  if (isDemoMode()) {
+    demoMemory.photos.delete(id);
+    return;
+  }
   try {
     await tx("readwrite", (s) => s.delete(id));
   } catch {
@@ -91,6 +105,12 @@ export async function deletePhoto(id: string): Promise<void> {
 
 /** Delete every stored photo whose id is not in `keep`. */
 export async function prunePhotos(keep: string[]): Promise<void> {
+  if (isDemoMode()) {
+    for (const k of [...demoMemory.photos.keys()]) {
+      if (!keep.includes(k)) demoMemory.photos.delete(k);
+    }
+    return;
+  }
   try {
     const keys = (await tx<IDBValidKey[]>("readonly", (s) => s.getAllKeys())) ?? [];
     const stale = keys.filter((k) => typeof k === "string" && !keep.includes(k));

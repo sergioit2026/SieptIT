@@ -1144,3 +1144,69 @@
     flex: 1;
   }
 }
+
+/* ---------- Modo demonstração (/demonstracao) ---------- */
+.demoBanner {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  padding: 0.6rem 1rem;
+  background: #8a4b08;
+  color: #fff8ec;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.demoBanner strong {
+  font-weight: 650;
+}
+
+.demoEnd {
+  appearance: none;
+  border: 1px solid rgba(255, 248, 236, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.demoEnd:hover,
+.demoEnd:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.demoEnd:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.demoPreviewOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: auto;
+  background: #fff;
+}
+
+.demoPreviewBar {
+  position: sticky;
+  top: 0;
+  z-index: 200; /* acima do IntroOverlay (100) do site */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
+  background: #8a4b08;
+  color: #fff8ec;
+  font-size: 0.88rem;
+}

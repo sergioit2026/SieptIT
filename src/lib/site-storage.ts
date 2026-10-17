@@ -1,4 +1,5 @@
 import type { SiteConfig } from "./site-config";
+import { DEMO_CONFIG_KEY, demoMemory, isDemoMode } from "./demo/mode";
 
 export const SITE_CONFIG_STORAGE_KEY = "siept-site-config";
 
@@ -19,6 +20,11 @@ export function isSiteConfig(value: unknown): value is SiteConfig {
 export function saveSiteConfig(config: SiteConfig): void {
   if (typeof window === "undefined") return;
   const raw = JSON.stringify(config);
+  if (isDemoMode()) {
+    // Modo demonstração: só memória, chave própria; nada em localStorage.
+    demoMemory.config.set(DEMO_CONFIG_KEY, raw);
+    return;
+  }
   try {
     window.localStorage.setItem(SITE_CONFIG_STORAGE_KEY, raw);
   } catch {
@@ -33,6 +39,15 @@ export function saveSiteConfig(config: SiteConfig): void {
 
 export function loadSiteConfig(): SiteConfig | null {
   if (typeof window === "undefined") return null;
+  if (isDemoMode()) {
+    try {
+      const raw = demoMemory.config.get(DEMO_CONFIG_KEY);
+      const parsed: unknown = raw ? JSON.parse(raw) : null;
+      return isSiteConfig(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
   for (const store of [window.sessionStorage, window.localStorage]) {
     try {
       const raw = store.getItem(SITE_CONFIG_STORAGE_KEY);
